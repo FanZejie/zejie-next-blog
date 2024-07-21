@@ -1,3 +1,5 @@
 node_modules
 .eslintrc.js
 *.tsx
+*.js
+*.ts

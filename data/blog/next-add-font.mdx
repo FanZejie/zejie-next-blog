@@ -1,0 +1,193 @@
+---
+title: Nextjs Add Font
+date: '2024-07-21'
+tags: ['Nextjs']
+draft: true
+layout: PostSimple
+summary: How to add a custom font to a Nextjs project
+---
+
+# 方式一
+
+在根layout.js中引入
+
+```jsx
+import { Roboto, Montserrat } from 'next/font/google'
+import './globals.css'
+import Header from '@/components/Header'
+
+const roboto_init = Roboto({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-roboto',
+})
+
+const montserrat_init = Montserrat({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-montserrat',
+})
+
+export const metadata = {
+  title: "Jason's Blog",
+  description: "Hello, here is Jason's Blog",
+}
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body className={`${roboto_init.variable} ${montserrat_init.variable}`}>
+        <main>
+          <Header />
+          {children}
+        </main>
+      </body>
+    </html>
+  )
+}
+```
+
+在global.css中声明
+
+```css
+.roboto {
+  font-family: var(--font-roboto);
+}
+
+.montserrat {
+  font-family: var(--font-montserrat);
+}
+```
+
+在任意需要的地方使用
+
+```html
+<Link className="h-full text-xl py-1 roboto" href={'/blog'}>Blog</Link>
+```
+
+# 方式2：
+
+如果要在tailwind中添加
+
+```js
+module.exports = {
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
+  ],
+  theme: {
+    extend: {
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      },
+      //----------添加这一段------
+      fontFamily: {
+        roboto: ['var(--font-roboto)'],
+        montserrat: ['var(--font-montserrat)'],
+      },
+    },
+  },
+  plugins: [],
+}
+```
+
+然后就可以把global.css中添加的那段删掉了
+
+在使用时要这样使用
+
+```html
+<Link className="h-full text-xl py-1 font-roboto" href={'/blog'}>Blog</Link>
+<Link className="h-full text-xl py-1 font-montserrat" href={'/tags'}>Tags</Link>
+```
+
+因为字体不会经常改，还可以再整洁一点，再模块化一点
+
+在根目录下新建一个/utils/font.js,把之前写在layout中的东西迁移进来，然后导出
+
+```js
+//font.js
+import { Roboto, Montserrat } from 'next/font/google'
+
+const roboto_init = Roboto({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-roboto',
+})
+
+const montserrat_init = Montserrat({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-montserrat',
+})
+
+export const roboto = roboto_init.variable
+export const montserrat = montserrat_init.variable
+```
+
+然后在layout.js中
+
+```jsx
+import { roboto, montserrat } from '@/utils/font'
+import './globals.css'
+import Header from '@/components/Header'
+
+export const metadata = {
+  title: "Jason's Blog",
+  description: "Hello, here is Jason's Blog",
+}
+
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body className={`${roboto} ${montserrat}`}>
+        <main>
+          <Header />
+          {children}
+        </main>
+      </body>
+    </html>
+  )
+}
+```
+
+在使用的地方没变化
+
+```html
+<Link className="h-full text-xl py-1 font-roboto" href={'/blog'}>Blog</Link>
+<Link className="h-full text-xl py-1 font-montserrat" href={'/tags'}>Tags</Link>
+```
+
+# 方式三
+
+在/utils/font.js中
+
+```js
+//font.js
+import { Roboto, Montserrat } from 'next/font/google'
+
+const roboto_init = Roboto({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-roboto',
+})
+
+const montserrat_init = Montserrat({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-montserrat',
+})
+
+export const roboto = roboto_init.className
+export const montserrat = montserrat_init.className
+```
+
+可以把layout.js中字体部分删除，除了font.js不用再添加任何东西
+在使用时
+
+```html
+import { montserrat, roboto } from "@/utils/font";
+<Link className={`h-full text-xl py-1 ${roboto}`} href={'/blog'}>Blog</Link>
+<Link className={`h-full text-xl py-1 ${montserrat}`} href={'/tags'}>Tags</Link>
+```
