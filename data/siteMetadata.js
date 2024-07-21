@@ -2,7 +2,7 @@
 const siteMetadata = {
   title: 'Next.js Starter Blog',
   author: 'Tails Azimuth',
-  headerTitle: 'TailwindBlog',
+  headerTitle: `ZeJie's Blog`,
   description: 'A blog created with Next.js and Tailwind.css',
   language: 'en-us',
   theme: 'system', // system, dark or light
@@ -34,7 +34,7 @@ const siteMetadata = {
     },
     // plausibleAnalytics: {
     //   plausibleDataDomain: '', // e.g. tailwind-nextjs-starter-blog.vercel.app
-         // If you are hosting your own Plausible.
+    // If you are hosting your own Plausible.
     //   src: '', // e.g. https://plausible.my-domain.com/js/script.js
     // },
     // simpleAnalytics: {},
